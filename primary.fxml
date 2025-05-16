@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ColorPicker?>
+<?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.TilePane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <top>
+      <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+        <items>
+            <MenuButton fx:id="menubutton_file" mnemonicParsing="false" text="Plik">
+              <items>
+                <MenuItem mnemonicParsing="false" text="Nowy" />
+                  <MenuItem mnemonicParsing="false" text="Otwórz" />
+                <MenuItem fx:id="menuitem_save" mnemonicParsing="false" text="Zapisz" />
+              </items>
+            </MenuButton>
+            <MenuButton mnemonicParsing="false" text="Edycja">
+              <items>
+                <MenuItem mnemonicParsing="false" text="Action 1" />
+                <MenuItem mnemonicParsing="false" text="Action 2" />
+              </items>
+            </MenuButton>
+            <ColorPicker id="colorpicker_topbar" />
+            <Button id="button_info" alignment="CENTER" mnemonicParsing="false" text="Info" />
+        </items>
+      </ToolBar>
+   </top>
+   <left>
+      <TilePane prefHeight="200.0" prefWidth="120.0" BorderPane.alignment="CENTER">
+         <children>
+            <VBox>
+               <children>
+                  <GridPane hgap="2.0" vgap="2.0">
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="40.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="40.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="40.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                     <children>
+                        <ToggleButton fx:id="togglebutton_pointer" mnemonicParsing="false" prefHeight="40.0" prefWidth="40.0" text="↗" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
+                           <GridPane.margin>
+                              <Insets />
+                           </GridPane.margin>
+                        </ToggleButton>
+                        <ToggleButton fx:id="togglebutton_select" mnemonicParsing="false" prefHeight="40.0" prefWidth="40.0" text="⬚" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
+                        <ToggleButton fx:id="togglebutton_rectangle" mnemonicParsing="false" prefHeight="40.0" prefWidth="40.0" text="▭" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
+                        <ToggleButton fx:id="togglebutton_circle" mnemonicParsing="false" prefHeight="40.0" prefWidth="40.0" text="○" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
+                        <ToggleButton fx:id="togglebutton_polygon" mnemonicParsing="false" prefHeight="40.0" prefWidth="40.0" text="◊" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                           <font>
+                              <Font size="15.0" />
+                           </font>
+                        </ToggleButton>
+                     </children>
+                  </GridPane>
+               </children>
+            </VBox>
+         </children>
+      </TilePane>
+   </left>
+   <center>
+      <TabPane fx:id="tabpane_with_canvas" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
+        <tabs>
+          <Tab text="Witaj">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <Button fx:id="button_welcome_new_project" layoutX="186.0" layoutY="152.0" mnemonicParsing="false" text="Nowy projekt" />
+                     </children></AnchorPane>
+            </content>
+          </Tab>
+        </tabs>
+      </TabPane>
+   </center>
+   <right>
+      <AnchorPane translateZ="100.0" BorderPane.alignment="CENTER" />
+   </right>
+   <bottom>
+      <AnchorPane translateZ="100.0" BorderPane.alignment="CENTER" />
+   </bottom>
+</BorderPane>
