@@ -12,7 +12,7 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        PrimaryController primaryController = new PrimaryController(stage);
+        new PrimaryController(stage);
         stage.setTitle("Inkscape");
     }
 

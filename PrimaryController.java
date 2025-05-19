@@ -1,10 +1,9 @@
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
 import javafx.fxml.FXML;
-import javafx.geometry.Dimension2D;
 import javafx.scene.Scene;
-import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Button;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Label;
@@ -13,9 +12,9 @@ import javafx.scene.control.TabPane;
 import javafx.scene.control.TabPane.TabClosingPolicy;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -83,9 +82,7 @@ public class PrimaryController {
     }
 
     public void saveCanvas(String filename) {
-        // -1 za zakładkę "witaj"
-        // TODO: poprawienie wybierania którą kanwę zapisać
-        CanvasTab tabToSave = canvasTabs.get(this.tabPaneWithCanvas.getSelectionModel().getSelectedIndex()-1);
+        CanvasTab tabToSave = (CanvasTab) this.tabPaneWithCanvas.getSelectionModel().getSelectedItem();
         CanvaSaver.saveCanva(filename, tabToSave.getShapes(), tabToSave.getCanvasDimension());
     }
 
@@ -159,10 +156,19 @@ public class PrimaryController {
             WelcomeTab.showCreateDialog(this);
         });
         menuButtonFile.getItems().get(1).setOnAction(e -> {
-            loadCanvas("test.canvas");
+            FileChooser fc = new FileChooser();
+            fc.setTitle("Otwórz projekt");
+            File fileToLoad = fc.showOpenDialog(this.scene.getWindow());
+            if (fileToLoad == null) { return; }
+            loadCanvas(fileToLoad.getAbsolutePath());
         });
         menuButtonFile.getItems().get(2).setOnAction(e -> {
-            saveCanvas("test.canvas");
+            FileChooser fc = new FileChooser();
+            fc.setTitle("Zapisz projekt");
+            fc.setInitialFileName("projekt.cnv");
+            File fileToSave = fc.showSaveDialog(this.scene.getWindow());
+            if (fileToSave == null) { return; }
+            saveCanvas(fileToSave.getAbsolutePath());
         });
     }
 

@@ -1,7 +1,4 @@
-import java.io.Serializable;
-
 import javafx.geometry.Bounds;
-import javafx.geometry.Dimension2D;
 import javafx.geometry.Point2D;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
@@ -9,17 +6,18 @@ import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 
-public class MyShape implements Serializable, Cloneable {
-    public transient Shape shape;
+public class MyShape implements Cloneable {
+    public Shape shape;
     public Boolean selected;
-    public transient Rectangle selectionRec;
-    public transient AnchorPane parentCanvas;
+    public Rectangle selectionRec;
+    public AnchorPane parentCanvas;
     public Boolean isColorMenuOpened;
     public Size lastPointClicked;
     public Type type;
     public Size centerOfRotation;
     public Size originOnTranslateStart;
     public Size translationBeforeTranslation;
+    public Size originalSize;
 
     public enum Type {
         RECTANGLE,
@@ -38,19 +36,18 @@ public class MyShape implements Serializable, Cloneable {
 
     public MyShape() {
         this.selected = false;
-        createSelectionRectangle();
     }
 
     // zamiana wewnętrznego zapisu punktów klasy Polygon na wygodniejszy w użyciu
-    public Point2D[] getPolygonVertices() {
+    public Size[] getPolygonVertices() {
         if (this.type != Type.POLYGON) { return null; }
 
         Polygon poly = (Polygon) this.shape;
 
-        Point2D[] result = new Point2D[poly.getPoints().size()/2];
+        Size[] result = new Size[poly.getPoints().size()/2];
 
         for (int i = 0; i < poly.getPoints().size(); i += 2) {
-            result[i/2] = new Point2D(poly.getPoints().get(i), poly.getPoints().get(i+1));
+            result[i/2] = new Size(poly.getPoints().get(i), poly.getPoints().get(i+1));
         }
 
         return result;
@@ -62,18 +59,18 @@ public class MyShape implements Serializable, Cloneable {
         ((Polygon) this.shape).getPoints().addAll(vertex.getX(), vertex.getY());
     }
 
-    public void setPolygonVertex(Point2D vertex, int index) {
+    public void setPolygonVertex(Size vertex, int index) {
         if (this.type != Type.POLYGON) { return; }
 
         Polygon poly = (Polygon) this.shape;
 
         if (index < 0 || index >= poly.getPoints().size()/2) { return; }
 
-        poly.getPoints().set(2*index, vertex.getX());
-        poly.getPoints().set(2*index+1, vertex.getY());
+        poly.getPoints().set(2*index, vertex.getWidth());
+        poly.getPoints().set(2*index+1, vertex.getHeight());
     }
 
-    public Point2D getPolygonVertex(int index) {
+    public Size getPolygonVertex(int index) {
         if (this.type != Type.POLYGON) { return null; }
 
         return getPolygonVertices()[index];
@@ -86,13 +83,17 @@ public class MyShape implements Serializable, Cloneable {
         ((Polygon) this.shape).getPoints().removeLast();
     }
 
+    public void setParentCanvas(AnchorPane canva) {
+        this.parentCanvas = canva;
+    }
+
     public void saveCenterOfRotation() {
         Bounds bounds = this.shape.getBoundsInParent();
         this.centerOfRotation = new Size(bounds.getCenterX(), bounds.getCenterY());
     }
 
     // stworzenie prostokąta pojawiąjącego się kiedy kształt jest zaznaczony
-    private void createSelectionRectangle() {
+    public void createSelectionRectangle() {
         Bounds bounds = this.shape.getBoundsInParent();
         this.selectionRec = ShapeCalc.calcRectangle(new Size(bounds.getMinX(), bounds.getMinY()), new Size(bounds.getMaxX(), bounds.getMaxY()));
         this.selectionRec.setFill(Color.LIGHTSKYBLUE);

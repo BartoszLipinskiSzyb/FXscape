@@ -1,4 +1,3 @@
-import java.io.Serializable;
 import java.util.ArrayList;
 
 import javafx.geometry.Bounds;
@@ -21,9 +20,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Ellipse;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
-import javafx.stage.Popup;
 
-public class CanvasTab extends Tab implements Serializable {
+public class CanvasTab extends Tab {
     private AnchorPane canvas;
 
     private ArrayList<MyShape> shapes = new ArrayList<>();
@@ -55,8 +53,12 @@ public class CanvasTab extends Tab implements Serializable {
         return this.shapes;
     }
 
+    public void addShape(MyShape shape) {
+        this.shapes.add(shape);
+    }
+
     // przypisanie kształtom metod służącym zanzaczaniu i zmienianiu koloru
-    private void applyShapeEventListeners(PrimaryController context, MyShape currShape) {
+    public void applyShapeEventListeners(PrimaryController context, MyShape currShape) {
         currShape.shape.setOnMousePressed(e1 -> {
             currShape.translationBeforeTranslation = new Size(currShape.shape.getTranslateX(), currShape.shape.getTranslateY());
             if (context.getSelectedTool() == PrimaryController.TOOLS.POINTER) {
@@ -269,7 +271,7 @@ public class CanvasTab extends Tab implements Serializable {
                 return;
             }
 
-            currShape.setPolygonVertex(new Point2D(e.getX(), e.getY()), currShape.getPolygonVertices().length-1);
+            currShape.setPolygonVertex(new Size(e.getX(), e.getY()), currShape.getPolygonVertices().length-1);
         });
 
         BorderStroke borderStroke = new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(1), new Insets(5));

@@ -6,16 +6,21 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
-import javafx.geometry.Dimension2D;
-
 public class CanvaSaver {
     public static Boolean saveCanva(String filename, ArrayList<MyShape> shapes, Size canvasDimension) {
+        MyShapeSerializable[] shapesToSave = new MyShapeSerializable[shapes.size()];
+
+        for (int i = 0; i < shapesToSave.length; ++i) {
+            shapesToSave[i] = new MyShapeSerializable(shapes.get(i));
+        }
+
+        SaveFileContent fileContent = new SaveFileContent(canvasDimension, shapesToSave);
+
         try {
             FileOutputStream out = new FileOutputStream(filename);
             ObjectOutputStream oos = new ObjectOutputStream(out);
 
-            oos.writeObject(canvasDimension.getWidth());
-            oos.writeObject(canvasDimension.getHeight());
+            oos.writeObject(fileContent);
 
             oos.close();
             out.close();
@@ -36,10 +41,21 @@ public class CanvaSaver {
             FileInputStream in = new FileInputStream(filename);
             ObjectInputStream ois = new ObjectInputStream(in);
 
-            Size canvasSize = new Size((Double) ois.readObject(), (Double) ois.readObject());
-            CanvasTab canva = new CanvasTab(context, canvasSize);
+            SaveFileContent fileContent = (SaveFileContent) ois.readObject();
 
-            // canva.setShapes((ArrayList<MyShape>) ois.readObject());
+            CanvasTab canva = new CanvasTab(context, fileContent.canvaSize);
+
+            System.out.println(fileContent.shapes.length);
+
+            for (MyShapeSerializable shapeSerializable : fileContent.shapes) {
+                MyShape shape = MyShapeSerializable.createMyShape(shapeSerializable);
+                shape.setParentCanvas(canva.getCanvas());
+
+                canva.applyShapeEventListeners(context, shape);
+
+                canva.addShape(shape);
+                canva.getCanvas().getChildren().add(shape.shape);
+            }
 
             ois.close();
             in.close();
