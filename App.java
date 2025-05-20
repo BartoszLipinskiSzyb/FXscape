@@ -17,7 +17,7 @@ public class App extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         new PrimaryController(stage);
-        stage.setTitle("Inkscape");
+        stage.setTitle("FXscape");
     }
 
     /** 

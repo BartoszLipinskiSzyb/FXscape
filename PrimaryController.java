@@ -130,9 +130,13 @@ public class PrimaryController {
      * @param filename nazwa pliku
      */
     public void saveCanvas(String filename) {
-        CanvasTab tabToSave = (CanvasTab) this.tabPaneWithCanvas.getSelectionModel().getSelectedItem();
-        if (!CanvaSaver.saveCanva(filename, tabToSave.getShapes(), tabToSave.getCanvasDimension())) {
-            System.out.println("Failed to save canva: " + filename);
+        try {
+            CanvasTab tabToSave = (CanvasTab) this.tabPaneWithCanvas.getSelectionModel().getSelectedItem();
+            if (!CanvaSaver.saveCanva(filename, tabToSave.getShapes(), tabToSave.getCanvasDimension())) {
+                System.out.println("Failed to save canva: " + filename);
+            }
+        } catch (Exception e) {
+            System.out.println("Cannot save tab that is not CanvasTab");
         }
     }
 
@@ -181,11 +185,11 @@ public class PrimaryController {
         buttonInfo = (Button) scene.getRoot().lookup("#button_info");
         buttonInfo.setOnMouseClicked(e -> {
             final Stage dialog = new Stage();
-            dialog.initModality(Modality.APPLICATION_MODAL);
+            dialog.initModality(Modality.NONE);
             dialog.initOwner(scene.getWindow());
 
             Pane emptyPane = new Pane();
-            Scene dialogScene = new Scene(emptyPane, 300, 200);
+            Scene dialogScene = new Scene(emptyPane);
 
             try {
                 dialogScene.setRoot(App.loadFXML("dialogInfo"));
