@@ -64,7 +64,6 @@ public class CanvasTab extends Tab {
             if (context.getSelectedTool() == PrimaryController.TOOLS.POINTER) {
                 if (e1.getButton() == MouseButton.PRIMARY) {
                     currShape.lastPointClicked = new Size(e1.getX(), e1.getY());
-                    currShape.originOnTranslateStart = new Size(currShape.shape.getLayoutX(), currShape.shape.getLayoutY());
 
                     for (MyShape shape1 : this.shapes) {
                         shape1.deselect();

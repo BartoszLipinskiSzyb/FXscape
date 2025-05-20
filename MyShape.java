@@ -14,7 +14,6 @@ public class MyShape implements Cloneable {
     public Boolean isColorMenuOpened;
     public Size lastPointClicked;
     public Type type;
-    public Size originOnTranslateStart;
     public Size translationBeforeTranslation;
     public Size originalSize;
     public Size originalOrigin;
