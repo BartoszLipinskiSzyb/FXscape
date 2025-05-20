@@ -2,7 +2,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ColorPicker;
@@ -10,6 +9,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TabPane.TabClosingPolicy;
+import javafx.scene.control.TabPane.TabDragPolicy;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.Pane;
@@ -22,7 +22,6 @@ public class PrimaryController {
     private Scene scene;
     private ToggleGroup toolButtonsGroup;
     private ToggleButton toolPointer;
-    private ToggleButton toolSelect;
     private ToggleButton toolRectangle;
     private ToggleButton toolCircle;
     private ToggleButton toolPolygon;
@@ -34,7 +33,6 @@ public class PrimaryController {
 
     public enum TOOLS {
         POINTER,
-        SELECT,
         RECTANGLE,
         CIRCLE,
         POLYGON,
@@ -73,31 +71,33 @@ public class PrimaryController {
     }
 
     public void loadCanvas(String filename) {
-        CanvasTab newTab = CanvaSaver.loadCanva(filename, this);
+        CanvaSaver cs = new CanvaSaver();
+        CanvasTab newTab = cs.loadCanva(filename, this);
 
         canvasTabs.add(newTab);
 
         this.tabPaneWithCanvas.getTabs().add(newTab);
         this.tabPaneWithCanvas.getSelectionModel().select(newTab);
+
+        // dodanie kształtów po wyrenderowaniu parenta dla nich, aby można je było pozycjonować
+        cs.loadShapes(this, newTab);
     }
 
     public void saveCanvas(String filename) {
         CanvasTab tabToSave = (CanvasTab) this.tabPaneWithCanvas.getSelectionModel().getSelectedItem();
-        CanvaSaver.saveCanva(filename, tabToSave.getShapes(), tabToSave.getCanvasDimension());
+        if (!CanvaSaver.saveCanva(filename, tabToSave.getShapes(), tabToSave.getCanvasDimension())) {
+            System.out.println("Failed to save canva: " + filename);
+        }
     }
 
     private void initializeUI() {
         toolPointer = (ToggleButton) this.scene.getRoot().lookup("#togglebutton_pointer");
-        toolSelect = (ToggleButton) this.scene.getRoot().lookup("#togglebutton_select");
         toolRectangle = (ToggleButton) this.scene.getRoot().lookup("#togglebutton_rectangle");
         toolCircle = (ToggleButton) this.scene.getRoot().lookup("#togglebutton_circle");
         toolPolygon = (ToggleButton) this.scene.getRoot().lookup("#togglebutton_polygon");
 
         toolPointer.setOnMouseClicked(e -> {
             this.selectedTool = TOOLS.POINTER;
-        });
-        toolSelect.setOnMouseClicked(e -> {
-            this.selectedTool = TOOLS.SELECT;
         });
         toolRectangle.setOnMouseClicked(e -> {
             this.selectedTool = TOOLS.RECTANGLE;
@@ -111,15 +111,15 @@ public class PrimaryController {
 
         toolButtonsGroup = new ToggleGroup();
         toolPointer.setToggleGroup(toolButtonsGroup);
-        toolSelect.setToggleGroup(toolButtonsGroup);
         toolRectangle.setToggleGroup(toolButtonsGroup);
         toolCircle.setToggleGroup(toolButtonsGroup);
         toolPolygon.setToggleGroup(toolButtonsGroup);
 
         tabPaneWithCanvas = (TabPane) this.scene.getRoot().lookup("#tabpane_with_canvas");
         tabPaneWithCanvas.setTabClosingPolicy(TabClosingPolicy.SELECTED_TAB);
+        tabPaneWithCanvas.tabDragPolicyProperty().set(TabDragPolicy.REORDER);
 
-        createCanvas(new Size(800, 600));
+        // createCanvas(new Size(800, 600));
         new WelcomeTab(this);
     }
 
@@ -161,6 +161,7 @@ public class PrimaryController {
             File fileToLoad = fc.showOpenDialog(this.scene.getWindow());
             if (fileToLoad == null) { return; }
             loadCanvas(fileToLoad.getAbsolutePath());
+            tabPaneWithCanvas.getSelectionModel().getSelectedItem().setText(fileToLoad.getName());
         });
         menuButtonFile.getItems().get(2).setOnAction(e -> {
             FileChooser fc = new FileChooser();
@@ -169,15 +170,12 @@ public class PrimaryController {
             File fileToSave = fc.showSaveDialog(this.scene.getWindow());
             if (fileToSave == null) { return; }
             saveCanvas(fileToSave.getAbsolutePath());
+            System.out.println("Setting title to: " + fileToSave.getName());
+            tabPaneWithCanvas.getSelectionModel().getSelectedItem().setText(fileToSave.getName());
         });
     }
 
     public Scene getScene() {
         return this.scene;        
-    }
-
-    @FXML
-    private void switchToSecondary() throws IOException {
-        App.setRoot("secondary");
     }
 }

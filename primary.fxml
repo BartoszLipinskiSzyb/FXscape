@@ -29,12 +29,6 @@
                 <MenuItem fx:id="menuitem_save" mnemonicParsing="false" text="Zapisz" />
               </items>
             </MenuButton>
-            <MenuButton mnemonicParsing="false" text="Edycja">
-              <items>
-                <MenuItem mnemonicParsing="false" text="Action 1" />
-                <MenuItem mnemonicParsing="false" text="Action 2" />
-              </items>
-            </MenuButton>
             <ColorPicker id="colorpicker_topbar" />
             <Button id="button_info" alignment="CENTER" mnemonicParsing="false" text="Info" />
         </items>
@@ -62,10 +56,9 @@
                               <Insets />
                            </GridPane.margin>
                         </ToggleButton>
-                        <ToggleButton fx:id="togglebutton_select" mnemonicParsing="false" prefHeight="40.0" prefWidth="40.0" text="⬚" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
-                        <ToggleButton fx:id="togglebutton_rectangle" mnemonicParsing="false" prefHeight="40.0" prefWidth="40.0" text="▭" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
-                        <ToggleButton fx:id="togglebutton_circle" mnemonicParsing="false" prefHeight="40.0" prefWidth="40.0" text="○" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
-                        <ToggleButton fx:id="togglebutton_polygon" mnemonicParsing="false" prefHeight="40.0" prefWidth="40.0" text="◊" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <ToggleButton fx:id="togglebutton_rectangle" mnemonicParsing="false" prefHeight="40.0" prefWidth="40.0" text="▭" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
+                        <ToggleButton fx:id="togglebutton_circle" mnemonicParsing="false" prefHeight="40.0" prefWidth="40.0" text="○" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
+                        <ToggleButton fx:id="togglebutton_polygon" mnemonicParsing="false" prefHeight="40.0" prefWidth="40.0" text="◊" GridPane.columnIndex="2" GridPane.rowIndex="1">
                            <font>
                               <Font size="15.0" />
                            </font>

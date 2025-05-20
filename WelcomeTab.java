@@ -1,6 +1,3 @@
-import javax.naming.Context;
-
-import javafx.geometry.Dimension2D;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -34,7 +31,7 @@ public class WelcomeTab {
                 ((Label) dialogScene.lookup("#label_info")).setText("Wprowadź liczby naturalne");
                 return;
             }
-            context.createCanvas(new Size(height, width));
+            context.createCanvas(new Size(width, height));
             dialog.close();
         });
 

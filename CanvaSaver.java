@@ -7,6 +7,8 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
 public class CanvaSaver {
+    public SaveFileContent content;
+
     public static Boolean saveCanva(String filename, ArrayList<MyShape> shapes, Size canvasDimension) {
         MyShapeSerializable[] shapesToSave = new MyShapeSerializable[shapes.size()];
 
@@ -36,26 +38,14 @@ public class CanvaSaver {
         return true;
     }
 
-    public static CanvasTab loadCanva(String filename, PrimaryController context) {
+    public CanvasTab loadCanva(String filename, PrimaryController context) {
         try {
             FileInputStream in = new FileInputStream(filename);
             ObjectInputStream ois = new ObjectInputStream(in);
 
-            SaveFileContent fileContent = (SaveFileContent) ois.readObject();
+            this.content = (SaveFileContent) ois.readObject();
 
-            CanvasTab canva = new CanvasTab(context, fileContent.canvaSize);
-
-            System.out.println(fileContent.shapes.length);
-
-            for (MyShapeSerializable shapeSerializable : fileContent.shapes) {
-                MyShape shape = MyShapeSerializable.createMyShape(shapeSerializable);
-                shape.setParentCanvas(canva.getCanvas());
-
-                canva.applyShapeEventListeners(context, shape);
-
-                canva.addShape(shape);
-                canva.getCanvas().getChildren().add(shape.shape);
-            }
+            CanvasTab canva = new CanvasTab(context, this.content.canvaSize);
 
             ois.close();
             in.close();
@@ -70,5 +60,22 @@ public class CanvaSaver {
         }
 
         return null;
+    }
+
+    public void loadShapes(PrimaryController context, CanvasTab canva) {
+        for (MyShapeSerializable shapeSerializable : this.content.shapes) {
+            MyShape shape = MyShapeSerializable.createMyShape(shapeSerializable, canva.getCanvas());
+            shape.setParentCanvas(canva.getCanvas());
+
+            canva.applyShapeEventListeners(context, shape);
+
+            canva.addShape(shape);
+            canva.getCanvas().getChildren().add(shape.shape);
+       
+            if (shape.type != MyShape.Type.POLYGON) {
+                shape.shape.setLayoutX(shape.tempOrigin.getWidth());
+                shape.shape.setLayoutY(shape.tempOrigin.getHeight());
+            }
+        }
     }
 }

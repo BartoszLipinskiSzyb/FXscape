@@ -65,7 +65,6 @@ public class CanvasTab extends Tab {
                 if (e1.getButton() == MouseButton.PRIMARY) {
                     currShape.lastPointClicked = new Size(e1.getX(), e1.getY());
                     currShape.originOnTranslateStart = new Size(currShape.shape.getLayoutX(), currShape.shape.getLayoutY());
-                    currShape.saveCenterOfRotation();
 
                     for (MyShape shape1 : this.shapes) {
                         shape1.deselect();
@@ -95,11 +94,9 @@ public class CanvasTab extends Tab {
 
                 currShape.shape.setTranslateX(currShape.translationBeforeTranslation.getWidth() + dx);
                 currShape.shape.setTranslateY(currShape.translationBeforeTranslation.getHeight() + dy);;
-                currShape.saveCenterOfRotation();
                 currShape.updateSelectionRectangle();
             }
         });
-        currShape.saveCenterOfRotation();
     }
 
     private void deselectAllShapes() {
@@ -168,6 +165,7 @@ public class CanvasTab extends Tab {
                                 currShape.removeLastPolygonVertex();
                                 if (currShape.getPolygonVertices().length == 0) {
                                     this.shapes.remove(currShape);
+                                    this.canvas.getChildren().remove(currShape.shape);
                                     this.isPolygonDrawn = false;
                                 }
                             } else {
@@ -179,6 +177,9 @@ public class CanvasTab extends Tab {
                             this.isPolygonDrawn = false;
                             currShape.shape.setStrokeWidth(0);
                             this.applyShapeEventListeners(context, currShape);
+                            Bounds b = currShape.shape.getBoundsInParent();
+                            currShape.originalOrigin = new Size(b.getWidth(), b.getHeight());
+                            currShape.originalSize = new Size(b.getWidth(), b.getHeight());
                         }
                     }
                     break;
@@ -227,14 +228,14 @@ public class CanvasTab extends Tab {
 
         this.canvas.setOnMouseReleased(e -> {
             switch (context.getSelectedTool()) {
-                case SELECT:
-                    // this.canvas.getChildren().remove(this.drawnObject.shape);
-                    break;
                 case RECTANGLE:
                 case CIRCLE:
                     MyShape currShape = this.shapes.get(this.shapes.size() - 1);
                     this.applyShapeEventListeners(context, currShape);
                     this.shapeIsDrawn = false;
+                    Bounds b = currShape.shape.getBoundsInParent();
+                    currShape.originalSize = new Size(b.getWidth(), b.getHeight());
+                    currShape.originalOrigin = new Size(b.getMinX(), b.getMinY());
                 default:
                     break;
             }

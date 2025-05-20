@@ -1,9 +1,8 @@
 import java.io.Serializable;
 
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Ellipse;
 import javafx.scene.shape.Polygon;
-import javafx.scene.shape.Rectangle;
 
 public class MyShapeSerializable implements Serializable {
     public double[] shapeRGBA = new double[4];
@@ -21,13 +20,15 @@ public class MyShapeSerializable implements Serializable {
         if (shape.type == MyShape.Type.POLYGON) {
             shapePolygonVertices = shape.getPolygonVertices();
         }
+        shapeSize = new Size(shape.originalSize.getWidth(), shape.originalSize.getHeight());
+        shapeOrigin = new Size(shape.originalOrigin.getWidth(), shape.originalOrigin.getHeight());
+        System.out.println("Shape origin: " + shapeOrigin.getWidth() + " " + shapeOrigin.getHeight());
 
-        shapeSize = new Size(shape.shape.getBoundsInParent().getWidth(), shape.shape.getBoundsInParent().getHeight());
-
-        shapeOrigin = new Size(shape.shape.getLayoutX(), shape.shape.getLayoutY());
         shapeRotation = shape.shape.getRotate();
         shapeScale = shape.shape.getScaleX(); // zapisujemy tylko jedną oś, jako że program nie obsługuje skalowania w osiach osobno
         shapeTranslation = new Size(shape.shape.getTranslateX(), shape.shape.getTranslateY());
+        System.out.println("Shape translation: " + shapeTranslation.getWidth() + " " + shapeTranslation.getHeight());
+
 
         shapeRGBA[0] = ((Color)shape.shape.getFill()).getRed();
         shapeRGBA[1] = ((Color)shape.shape.getFill()).getGreen();
@@ -37,7 +38,7 @@ public class MyShapeSerializable implements Serializable {
         type = shape.type;
     }
 
-    public static MyShape createMyShape(MyShapeSerializable mss) {
+    public static MyShape createMyShape(MyShapeSerializable mss, AnchorPane canva) {
         MyShape shape = new MyShape();
 
         shape.type = mss.type;
@@ -50,20 +51,28 @@ public class MyShapeSerializable implements Serializable {
                 }
                 break;
             case ELLIPSE:
-                // TODO: prawdopodobnie trzeba bedzie użyc calcEllipse
-                shape.shape = new Ellipse(mss.shapeOrigin.getWidth(), mss.shapeOrigin.getHeight(), mss.shapeSize.getWidth(), mss.shapeSize.getHeight());
+                shape.shape = ShapeCalc.calcEllipse(
+                    new Size(0, 0),
+                    new Size(mss.shapeSize.getWidth(), mss.shapeSize.getHeight())
+                );
+                shape.tempOrigin = new Size(mss.shapeOrigin.getWidth(), mss.shapeOrigin.getHeight());
                 break;
             case RECTANGLE:
-                shape.shape = new Rectangle(mss.shapeOrigin.getWidth(), mss.shapeOrigin.getHeight(), mss.shapeSize.getWidth(), mss.shapeSize.getHeight());
+                shape.shape = ShapeCalc.calcRectangle(
+                    new Size(0, 0),
+                    new Size(mss.shapeSize.getWidth(), mss.shapeSize.getHeight())
+                );
+                shape.tempOrigin = new Size(mss.shapeOrigin.getWidth(), mss.shapeOrigin.getHeight());
                 break;
             default:
                 System.out.println("Error: cannot read shape type");
                 return null;
         }
 
+        shape.originalSize = mss.shapeSize;
+        shape.originalOrigin = mss.shapeOrigin;
+
         shape.shape.setRotate(mss.shapeRotation);
-        shape.shape.setLayoutX(mss.shapeOrigin.getWidth());
-        shape.shape.setLayoutY(mss.shapeOrigin.getHeight());
         shape.shape.setScaleX(mss.shapeScale);
         shape.shape.setScaleY(mss.shapeScale);
         shape.shape.setTranslateX(mss.shapeTranslation.getWidth());

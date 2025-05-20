@@ -14,10 +14,13 @@ public class MyShape implements Cloneable {
     public Boolean isColorMenuOpened;
     public Size lastPointClicked;
     public Type type;
-    public Size centerOfRotation;
     public Size originOnTranslateStart;
     public Size translationBeforeTranslation;
     public Size originalSize;
+    public Size originalOrigin;
+
+    // tymczasowa zmienna pozwalająca obejść problem z ustawieniem layoutX i layoutY dla kształtu
+    public Size tempOrigin;
 
     public enum Type {
         RECTANGLE,
@@ -79,17 +82,13 @@ public class MyShape implements Cloneable {
     public void removeLastPolygonVertex() {
         if (this.type != Type.POLYGON) { return; }
 
+        // usuwam 2 razy, ponieważ punkty są zapisane jako double[] gdzie parzyste indexy to xn, a nieparzyste yn
         ((Polygon) this.shape).getPoints().removeLast();
         ((Polygon) this.shape).getPoints().removeLast();
     }
 
     public void setParentCanvas(AnchorPane canva) {
         this.parentCanvas = canva;
-    }
-
-    public void saveCenterOfRotation() {
-        Bounds bounds = this.shape.getBoundsInParent();
-        this.centerOfRotation = new Size(bounds.getCenterX(), bounds.getCenterY());
     }
 
     // stworzenie prostokąta pojawiąjącego się kiedy kształt jest zaznaczony
