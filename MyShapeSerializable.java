@@ -4,18 +4,47 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
 
+/**
+ * Zapis kształtu pozwlający na serializację
+ */
 public class MyShapeSerializable implements Serializable {
+    /**
+     * Kolor wypełnienia
+     */
     public double[] shapeRGBA = new double[4];
+    /**
+     * Początkowy lewy górny róg prostokąta ograniczającego kształt
+     */
     public Size shapeOrigin;
+    /**
+     * Początkowy rozmiar
+     */
     public Size shapeSize;
+    /**
+     * Obrót
+     */
     public double shapeRotation;
+    /**
+     * Skala
+     */
     public double shapeScale;
+    /**
+     * Przesunięcie
+     */
     public Size shapeTranslation;
+    /**
+     * Wierzchołki wielokąta
+     */
     public Size[] shapePolygonVertices;
-
-    public Boolean selected;
+    /**
+     * Typ
+     */
     public MyShape.Type type;
 
+    /**
+     * Konstruktor
+     * @param shape kształt
+     */
     public MyShapeSerializable(MyShape shape) {
         if (shape.type == MyShape.Type.POLYGON) {
             shapePolygonVertices = shape.getPolygonVertices();
@@ -38,6 +67,12 @@ public class MyShapeSerializable implements Serializable {
         type = shape.type;
     }
 
+    /**
+     * Odtworzenie kształtu MyShape z serializowalnego formatu
+     * @param mss serializowalny kształt
+     * @param canva kanwa, na której ma być odtworzony kształt
+     * @return MyShape
+     */
     public static MyShape createMyShape(MyShapeSerializable mss, AnchorPane canva) {
         MyShape shape = new MyShape();
 

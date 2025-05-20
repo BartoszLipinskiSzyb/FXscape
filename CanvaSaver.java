@@ -6,9 +6,23 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
+/**
+ * Zapisywanie i wczytywanie projektów z pliku
+ */
 public class CanvaSaver {
+    /**
+     * Zawartość wczytana z pliku
+     */
     public SaveFileContent content;
 
+
+    /** 
+     * Zapisywanie projektu do pliku
+     * @param filename nazwa pliku
+     * @param shapes kształty do zapisania
+     * @param canvasDimension wymiar kanwy do zapisania
+     * @return Boolean
+     */
     public static Boolean saveCanva(String filename, ArrayList<MyShape> shapes, Size canvasDimension) {
         MyShapeSerializable[] shapesToSave = new MyShapeSerializable[shapes.size()];
 
@@ -38,6 +52,13 @@ public class CanvaSaver {
         return true;
     }
 
+    
+    /** 
+     * Wczytywanie projektu z pliku
+     * @param filename nazwa pliku
+     * @param context kontekst primary controller
+     * @return CanvasTab
+     */
     public CanvasTab loadCanva(String filename, PrimaryController context) {
         try {
             FileInputStream in = new FileInputStream(filename);
@@ -62,6 +83,13 @@ public class CanvaSaver {
         return null;
     }
 
+    
+    /** 
+     * Ustawianie kształtów na kanwie po wcześniejszym wczytaniu przez loadCanva
+     * @param context kontekst primary controller
+     * @param canva kanwa na którą mają być wczytane kształty
+     * @see loadCanva
+     */
     public void loadShapes(PrimaryController context, CanvasTab canva) {
         for (MyShapeSerializable shapeSerializable : this.content.shapes) {
             MyShape shape = MyShapeSerializable.createMyShape(shapeSerializable, canva.getCanvas());
@@ -70,7 +98,6 @@ public class CanvaSaver {
             canva.applyShapeEventListeners(context, shape);
 
             canva.addShape(shape);
-            canva.getCanvas().getChildren().add(shape.shape);
        
             if (shape.type != MyShape.Type.POLYGON) {
                 shape.shape.setLayoutX(shape.tempOrigin.getWidth());

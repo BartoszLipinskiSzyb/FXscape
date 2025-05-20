@@ -6,41 +6,95 @@ import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 
-public class MyShape implements Cloneable {
+/**
+ * Wrapper dla klasy Shape
+ */
+public class MyShape {
+    /**
+     * JavaFX-owy kształt
+     */
     public Shape shape;
+    /**
+     * Czy figura jest zaznaczona
+     */
     public Boolean selected;
+    /**
+     * Prostokąt zaznaczający figurę
+     */
     public Rectangle selectionRec;
+    /**
+     * Kanwa, na której znajduje się kształt
+     */
     public AnchorPane parentCanvas;
-    public Boolean isColorMenuOpened;
+    /**
+     * Ostatni kształt kliknięty na kształcie
+     */
     public Size lastPointClicked;
+    /**
+     * Rodzaj kształtu
+     */
     public Type type;
+    /**
+     * Obecne przesunięcie kształtu zapiywanie przed kolejnym przesunięciem
+     */
     public Size translationBeforeTranslation;
+    /**
+     * Początkowy rozmiar kształtu po utworzeniu
+     */
     public Size originalSize;
+    /**
+     * Początkowy lewy górny róg prostokąta ograniczającego kształt po utworzeniu
+     */
     public Size originalOrigin;
 
-    // tymczasowa zmienna pozwalająca obejść problem z ustawieniem layoutX i layoutY dla kształtu
+    /** 
+     * Tymczasowa zmienna pozwalająca obejść problem z ustawieniem layoutX i layoutY dla kształtu
+     */
     public Size tempOrigin;
 
+    /**
+     * Typ kształtu
+     */
     public enum Type {
+        /**
+         * Prostokąt
+         */
         RECTANGLE,
+        /**
+         * Elipsa
+         */
         ELLIPSE,
+        /**
+         * Wielokąt
+         */
         POLYGON
     }
 
+    /**
+     * Konstruktor
+     * @param shape kształt
+     * @param parentCanvas kanwa, na której będzie kształt
+     * @param type rodzaj kształtu
+     */
     public MyShape(Shape shape, AnchorPane parentCanvas, Type type) {
         this.shape = shape;
         this.parentCanvas = parentCanvas;
         this.selected = false;
-        this.isColorMenuOpened = false;
         this.type = type;
         createSelectionRectangle();
     }
 
+    /**
+     * Konstruktor
+     */
     public MyShape() {
         this.selected = false;
     }
 
-    // zamiana wewnętrznego zapisu punktów klasy Polygon na wygodniejszy w użyciu
+    /**
+     * Zamiana wewnętrznego zapisu punktów klasy Polygon na wygodniejszy w użyciu
+     * @return Size[]
+     */
     public Size[] getPolygonVertices() {
         if (this.type != Type.POLYGON) { return null; }
 
@@ -55,12 +109,21 @@ public class MyShape implements Cloneable {
         return result;
     }
 
+    /**
+     * Dodanie wierzchołka do wielokąta
+     * @param vertex koordynaty x y wierzchołka
+     */
     public void addPolygonVertex(Point2D vertex) {
         if (this.type != Type.POLYGON) { return; }
 
         ((Polygon) this.shape).getPoints().addAll(vertex.getX(), vertex.getY());
     }
 
+    /**
+     * Zmiana pozycji wierzchołka
+     * @param vertex koordynaty wierzchołka
+     * @param index indeks
+     */
     public void setPolygonVertex(Size vertex, int index) {
         if (this.type != Type.POLYGON) { return; }
 
@@ -72,12 +135,20 @@ public class MyShape implements Cloneable {
         poly.getPoints().set(2*index+1, vertex.getHeight());
     }
 
+    /**
+     * Getter pobierający jeden wierzchołek
+     * @param index indeks
+     * @return Size
+     */
     public Size getPolygonVertex(int index) {
         if (this.type != Type.POLYGON) { return null; }
 
         return getPolygonVertices()[index];
     }
 
+    /**
+     * Usunięcie ostatnio dodanego wierzchołka wielokąta
+     */
     public void removeLastPolygonVertex() {
         if (this.type != Type.POLYGON) { return; }
 
@@ -86,11 +157,17 @@ public class MyShape implements Cloneable {
         ((Polygon) this.shape).getPoints().removeLast();
     }
 
+    /**
+     * Setter parentCanvas
+     * @param canva kanwa
+     */
     public void setParentCanvas(AnchorPane canva) {
         this.parentCanvas = canva;
     }
 
-    // stworzenie prostokąta pojawiąjącego się kiedy kształt jest zaznaczony
+    /**
+     * Stworzenie prostokąta pojawiąjącego się kiedy kształt jest zaznaczony
+     */
     public void createSelectionRectangle() {
         Bounds bounds = this.shape.getBoundsInParent();
         this.selectionRec = ShapeCalc.calcRectangle(new Size(bounds.getMinX(), bounds.getMinY()), new Size(bounds.getMaxX(), bounds.getMaxY()));
@@ -101,7 +178,9 @@ public class MyShape implements Cloneable {
         this.selectionRec.setMouseTransparent(true);
     }
 
-    // aktualizacja wymiarów prostokąta zaznaczenia
+    /** 
+     * Aktualizacja wymiarów prostokąta zaznaczenia
+     */
     public void updateSelectionRectangle() {
         Bounds bounds = this.shape.getBoundsInParent();
         this.selectionRec.setX(bounds.getMinX());
@@ -110,6 +189,9 @@ public class MyShape implements Cloneable {
         this.selectionRec.setHeight(bounds.getHeight());
     }
 
+    /**
+     * Zaznaczenie kształtu
+     */
     public void select() {
         if (this.parentCanvas == null || this.selected) return;
 
@@ -118,6 +200,9 @@ public class MyShape implements Cloneable {
         this.parentCanvas.getChildren().add(this.selectionRec);
     }
 
+    /**
+     * Odznaczenie kształtu
+     */
     public void deselect() {
         if (this.parentCanvas == null || !this.selected) return;
 

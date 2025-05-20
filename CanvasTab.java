@@ -8,6 +8,7 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.CustomMenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Border;
@@ -21,17 +22,29 @@ import javafx.scene.shape.Ellipse;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
 
+/**
+ * Obsługa zdarzeń na kanwie, zachowanie kształtów
+ */
 public class CanvasTab extends Tab {
     private AnchorPane canvas;
 
     private ArrayList<MyShape> shapes = new ArrayList<>();
 
+    
+    /** 
+     * canvas getter
+     * @return AnchorPane
+     */
     public AnchorPane getCanvas() {
         return this.canvas;
     }
 
     private Size canvasDimension;
 
+    /**
+     * canvasDimension getter
+     * @return Size
+     */
     public Size getCanvasDimension() {
         return this.canvasDimension;
     }
@@ -45,19 +58,45 @@ public class CanvasTab extends Tab {
 
     private Boolean isPolygonDrawn = false;
 
+    /**
+     * shapes setter
+     * @param shapes kształty do ustawienia
+     */
     public void setShapes(ArrayList<MyShape> shapes) {
         this.shapes = shapes;
     }
 
+    /**
+     * shapes getter
+     * @return ArrayList
+     */
     public ArrayList<MyShape> getShapes() {
         return this.shapes;
     }
 
+    /**
+     * Dodawanie kształtu
+     * @param shape kształt do dodania
+     */
     public void addShape(MyShape shape) {
         this.shapes.add(shape);
+        this.canvas.getChildren().add(shape.shape);
     }
 
-    // przypisanie kształtom metod służącym zanzaczaniu i zmienianiu koloru
+    /**
+     * Usuwanie kształtu
+     * @param shape kształt do usunięcia
+     */
+    public void removeShape(MyShape shape) {
+        this.shapes.remove(shape);
+        this.canvas.getChildren().remove(shape.shape);
+    }
+
+    /**
+     * Przypisanie kształtom metod służącym zanzaczaniu i zmienianiu koloru
+     * @param context kontekst primary controller
+     * @param currShape kształt, któremu zostaną przypisane listenery
+     */
     public void applyShapeEventListeners(PrimaryController context, MyShape currShape) {
         currShape.shape.setOnMousePressed(e1 -> {
             currShape.translationBeforeTranslation = new Size(currShape.shape.getTranslateX(), currShape.shape.getTranslateY());
@@ -98,12 +137,20 @@ public class CanvasTab extends Tab {
         });
     }
 
+    /**
+     * Usunięcie zaznaczenia na wszystkich kształtach
+     */
     private void deselectAllShapes() {
         for (MyShape shape : this.shapes) {
             shape.deselect();
         }
     }
 
+    /**
+     * Konstruktor, tworzy kanwę i ustawia jej event listenery
+     * @param context kontekst primary controller
+     * @param canvasSize rozmiar kanwy
+     */
     public CanvasTab(PrimaryController context, Size canvasSize) {
         this.canvasDimension = canvasSize;
 
@@ -120,6 +167,18 @@ public class CanvasTab extends Tab {
         this.colorPickerPopup = new ContextMenu(colorItem);
         this.colorPickerPopup.setStyle("-fx-background-color: #ffffff00;");
 
+        context.getScene().setOnKeyPressed(e -> {
+            if (e.getCode() == KeyCode.DELETE) {
+                for (MyShape shape : this.shapes) {
+                    if (shape.selected) {
+                        shape.deselect();
+                        this.removeShape(shape);
+                        break;
+                    }
+                }
+            }
+        });
+
         this.canvas.setOnMousePressed(e -> {
             clickStart = new Size(e.getX(), e.getY());
             lastClickScene = new Size(e.getSceneX(), e.getSceneY());
@@ -128,16 +187,14 @@ public class CanvasTab extends Tab {
                 case RECTANGLE:
                     newShape = new MyShape(ShapeCalc.calcRectangle(clickStart, clickStart), this.canvas, MyShape.Type.RECTANGLE);
                     newShape.shape.setFill(context.getSelectedColor());
-                    this.shapes.add(newShape);
-                    this.canvas.getChildren().add(newShape.shape);
+                    this.addShape(newShape);
                     this.shapeIsDrawn = true;
                     deselectAllShapes();
                     break;
                 case CIRCLE:
                     newShape = new MyShape(ShapeCalc.calcEllipse(clickStart, clickStart), this.canvas, MyShape.Type.ELLIPSE);
                     newShape.shape.setFill(context.getSelectedColor());
-                    this.shapes.add(newShape);
-                    this.canvas.getChildren().add(newShape.shape);
+                    this.addShape(newShape);
                     this.shapeIsDrawn = true;
                     deselectAllShapes();
                     break;
@@ -152,8 +209,7 @@ public class CanvasTab extends Tab {
                         newShape.shape.setFill(context.getSelectedColor());
                         newShape.shape.setStroke(Color.BLACK);
                         newShape.shape.setStrokeWidth(1);
-                        this.shapes.add(newShape);
-                        this.canvas.getChildren().add(newShape.shape);
+                        this.addShape(newShape);
 
                         deselectAllShapes();
                     } else {
@@ -163,8 +219,7 @@ public class CanvasTab extends Tab {
                                 // cofnięcie narysowania wierzchołka wielokąta
                                 currShape.removeLastPolygonVertex();
                                 if (currShape.getPolygonVertices().length == 0) {
-                                    this.shapes.remove(currShape);
-                                    this.canvas.getChildren().remove(currShape.shape);
+                                    this.removeShape(currShape);
                                     this.isPolygonDrawn = false;
                                 }
                             } else {

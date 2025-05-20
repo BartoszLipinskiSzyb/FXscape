@@ -6,7 +6,14 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+/**
+ * Kontrola zakładki powitalnej
+ */
 public class WelcomeTab {
+    /**
+     * Pokaż dialog tworzenia kanwy
+     * @param context kontekst primary controller
+     */
     public static void showCreateDialog(PrimaryController context) {
         final Stage dialog = new Stage();
         dialog.initModality(Modality.APPLICATION_MODAL);
@@ -39,6 +46,10 @@ public class WelcomeTab {
         dialog.show();
     }
 
+    /**
+     * Konstruktor
+     * @param context kontekst primary controller
+     */
     public WelcomeTab(PrimaryController context) {
         Button buttonWelcomeNewProject = (Button) context.getScene().getRoot().lookup("#button_welcome_new_project");
         buttonWelcomeNewProject.setOnAction(e -> {

@@ -5,6 +5,9 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
+/**
+ * Główna klasa aplikacji
+ */
 public class App extends Application {
     /** 
      * Inicjalizacja funkcjonalności aplikacji
