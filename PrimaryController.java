@@ -225,7 +225,6 @@ public class PrimaryController {
             File fileToSave = fc.showSaveDialog(this.scene.getWindow());
             if (fileToSave == null) { return; }
             saveCanvas(fileToSave.getAbsolutePath());
-            System.out.println("Setting title to: " + fileToSave.getName());
             tabPaneWithCanvas.getSelectionModel().getSelectedItem().setText(fileToSave.getName());
         });
     }

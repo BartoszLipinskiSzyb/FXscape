@@ -51,12 +51,10 @@ public class MyShapeSerializable implements Serializable {
         }
         shapeSize = new Size(shape.originalSize.getWidth(), shape.originalSize.getHeight());
         shapeOrigin = new Size(shape.originalOrigin.getWidth(), shape.originalOrigin.getHeight());
-        System.out.println("Shape origin: " + shapeOrigin.getWidth() + " " + shapeOrigin.getHeight());
 
         shapeRotation = shape.shape.getRotate();
         shapeScale = shape.shape.getScaleX(); // zapisujemy tylko jedną oś, jako że program nie obsługuje skalowania w osiach osobno
         shapeTranslation = new Size(shape.shape.getTranslateX(), shape.shape.getTranslateY());
-        System.out.println("Shape translation: " + shapeTranslation.getWidth() + " " + shapeTranslation.getHeight());
 
 
         shapeRGBA[0] = ((Color)shape.shape.getFill()).getRed();
